@@ -1,0 +1,48 @@
+<!-- question.choice_set.all returns an iterable -->
+<!-- 
+    <h1>{{ question.question_text }}</h1>
+<ul>
+{% for choice in question.choice_set.all %}
+    <li>{{ choice.choice_text }}</li>
+{% endfor %}
+</ul> 
+-->
+
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+
+    {% comment %} 
+    POST forms that are targeted at internal URLs should use the {% csrf_token %} template tag. 
+    to avoid Cross Site Request Forgeries
+    {% endcomment %}
+    {%csrf_token%}
+    <fieldset>
+        <legend><h1>{{question.question_text}}</h1></legend>
+
+        {% if error_message %}
+            <p><strong>{{error_message}}</strong></p>
+        {% endif %}
+
+        {% for choice in question.choice_set.all %}
+            
+            {% comment %} radio field {% endcomment %}
+            {% comment %} 
+            
+            The name of each radio button is "choice". 
+            That means, when somebody selects one of the radio buttons 
+            and submits the form, it’ll send the POST data choice=# 
+            where # is the ID of the selected choice.
+
+            forloop.counter indicates how many times the for tag has gone through its loop
+
+            {% endcomment %}
+
+            <input type="radio" name="choice" id="choice"
+                id="choice{{forloop.counter}}" value="{{choice.id}}"
+            >
+            <label for="choice{{forloop.counter}}">{{choice.choice_text}}</label>
+            <br>
+        {% endfor %}
+        </fieldset>
+        <input type="submit" value="Vote">
+</form>
